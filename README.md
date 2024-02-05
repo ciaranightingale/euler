@@ -1,31 +1,66 @@
-# Euler Smart Contracts
+## Foundry
 
-This repo contains the smart contracts and tests for the [Euler Protocol](https://www.euler.finance/).
+**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
 
-## Setup
+Foundry consists of:
 
-    npm i
+-   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
+-   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
+-   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
+-   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
 
-## Testing
+## Documentation
 
-    npx hardhat test
+https://book.getfoundry.sh/
 
-## Generate coverage report
+## Usage
 
-    npx hardhat coverage
+### Build
 
-## Docs
+```shell
+$ forge build
+```
 
-* [General Euler Docs](https://docs.euler.finance/)
-* [Contract Architecturel](https://docs.euler.finance/developers/getting-started/architecture)
-* [Contract Reference](https://docs.euler.finance/developers/getting-started/contract-reference)
-* [IEuler.sol Solidity Interface](https://github.com/euler-xyz/euler-interfaces/blob/master/contracts/IEuler.sol)
+### Test
 
-## License
+```shell
+$ forge test
+```
 
-All files are licensed under GPL-2.0 or later except for the following, which are licensed under Business Source License 1.1 (see the file `LICENSE`):
+### Format
 
-* `contracts/modules/RiskManager.sol`
-* `contracts/modules/Liquidation.sol`
+```shell
+$ forge fmt
+```
 
-These two files will be automatically re-licensed under GPL-2.0 on December 13th, 2023.
+### Gas Snapshots
+
+```shell
+$ forge snapshot
+```
+
+### Anvil
+
+```shell
+$ anvil
+```
+
+### Deploy
+
+```shell
+$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+```
+
+### Cast
+
+```shell
+$ cast <subcommand>
+```
+
+### Help
+
+```shell
+$ forge --help
+$ anvil --help
+$ cast --help
+```
