@@ -5,6 +5,7 @@ import { IERC20 } from "forge-std/src/interfaces/IERC20.sol";
 import { IEToken } from "./interface/IEToken.sol";
 import { IDToken } from "./interface/IDToken.sol";
 import { ILiquidation } from "./interface/ILiquidation.sol";
+import { IMarkets } from "./interface/IMarkets.sol";
 
 contract Liquidator {
     IERC20 immutable DAI;
@@ -12,13 +13,15 @@ contract Liquidator {
     IDToken immutable dDAI;
     address immutable EULER;
     ILiquidation immutable LIQUIDATION;
+    IMarkets immutable MARKETS;
 
-    constructor(IERC20 _dai, IEToken _eDAI, IDToken _dDAI, address _euler, ILiquidation _liquidation) {
+    constructor(IERC20 _dai, IEToken _eDAI, IDToken _dDAI, address _euler, ILiquidation _liquidation, IMarkets _markets) {
         DAI = _dai;
         eDAI = _eDAI;
         dDAI = _dDAI;
         EULER = _euler;
         LIQUIDATION = _liquidation;
+        MARKETS = _markets;
     }
 
 

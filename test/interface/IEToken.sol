@@ -8,6 +8,7 @@ interface IEToken {
     function mint(uint256 subAccountId, uint256 amount) external;
     function donateToReserves(uint256 subAccountId, uint256 amount) external;
     function withdraw(uint256 subAccountId, uint256 amount) external;
+    
     function getLastInterestAccumulatorUpdate(address eToken) external view returns (uint40);
     function getUnderlyingDecimals(address eToken) external view returns (uint8);
     function getInterestRateModel(address eToken) external view returns (uint32);

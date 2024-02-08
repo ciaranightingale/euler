@@ -10,13 +10,15 @@ import { IEToken } from "./interface/IEToken.sol";
 import { IDToken } from "./interface/IDToken.sol";
 import { IAaveFlashLoan } from "./interface/IAaveFlashLoan.sol";
 import { ILiquidation } from "./interface/ILiquidation.sol";
-import { ETokenView } from "./ETokenView.sol";
+import { MarketsView } from "./MarketsView.sol";
+import { IMarkets } from "./interface/IMarkets.sol";
 
 contract EulerFinancePoC is Test {
     IERC20 constant DAI = IERC20(0x6B175474E89094C44Da98b954EedeAC495271d0F);
     IEToken constant eDAI = IEToken(0xe025E3ca2bE02316033184551D4d3Aa22024D9DC);
-    address impl = address(0xeC29b4C2CaCaE5dF1A491f084E5Ec7C62A7EdAb5);
-    ETokenView eTokenView;
+    // address eTokenImpl = address(0xeC29b4C2CaCaE5dF1A491f084E5Ec7C62A7EdAb5);
+    IMarkets constant MARKETS = IMarkets(0x3520d5a913427E6F0D6A83E07ccD4A4da316e4d3);
+    IMarkets constant MARKETS_IMPL = IMarkets(0x1E21CAc3eB590a5f5482e1CCe07174DcDb7f7FCe);
     IDToken constant dDAI = IDToken(0x6085Bc95F506c326DCBCD7A6dd6c79FBc18d4686);
     address constant EULER = 0x27182842E098f60e3D576794A5bFFb0777E025d3;
     ILiquidation constant LIQUIDATION = ILiquidation(0xf43ce1d09050BAfd6980dD43Cde2aB9F18C85b34);
@@ -26,8 +28,7 @@ contract EulerFinancePoC is Test {
 
     function setUp() public {
         vm.createSelectFork("eth", 16817995);
-        eTokenView = new ETokenView();
-        vm.etch(impl, address(eTokenView).code);
+        vm.etch(address(MARKETS_IMPL), address(deployCode('MarketsView.sol')).code);
         vm.label(address(DAI), "DAI");
         vm.label(address(eDAI), "eToken");
         vm.label(address(dDAI), "dToken");
@@ -65,8 +66,8 @@ contract EulerFinancePoC is Test {
         // approve aave to spend DAI
         DAI.approve(address(aaveV2), type(uint256).max);
         // 2. deploy two contracts
-        violator = new Violator(DAI, IEToken(address(eDAI)), dDAI, EULER);
-        liquidator = new Liquidator(DAI, IEToken(address(eDAI)), dDAI, EULER, LIQUIDATION);
+        violator = new Violator(DAI, IEToken(address(eDAI)), dDAI, EULER, MARKETS);
+        liquidator = new Liquidator(DAI, IEToken(address(eDAI)), dDAI, EULER, LIQUIDATION, MARKETS);
         // transfer flash loan to the violator
         DAI.transfer(address(violator), DAI.balanceOf(address(this)));
         violator.violate();
