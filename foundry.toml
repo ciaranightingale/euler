@@ -1,6 +1,13 @@
 [profile.default]
-src = "src"
+src = "contracts"
 out = "out"
 libs = ["lib"]
 
+rpc_endpoints = { eth = "https://rpc.ankr.com/eth"}
+
+
+remappings = [
+    '@openzeppelin/=lib/openzeppelin-contracts/contracts/',
+    'forge-std/=lib/forge-std/',
+]
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
