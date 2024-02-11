@@ -7,6 +7,8 @@ import { IDToken } from "./interface/IDToken.sol";
 import { ILiquidation } from "./interface/ILiquidation.sol";
 import { IMarkets } from "./interface/IMarkets.sol";
 
+import "forge-std/src/Test.sol";
+
 contract Liquidator {
     IERC20 immutable DAI;
     IEToken immutable eDAI;
@@ -28,8 +30,13 @@ contract Liquidator {
     function liquidate(address violator) external {
         ILiquidation.LiquidationOpportunity memory returnData =
             LIQUIDATION.checkLiquidation(address(this), violator, address(DAI), address(DAI));
+        MARKETS.getUserAsset("before liquidating", address(eDAI), address(this));
         LIQUIDATION.liquidate(violator, address(DAI), address(DAI), returnData.repay, returnData.yield);
+        MARKETS.getUserAsset("after liquidating", address(eDAI), address(this));
+        console.log("EULER balance before withdrawing: ", DAI.balanceOf(EULER));
         eDAI.withdraw(0, DAI.balanceOf(EULER));
+        console.log("EULER balance after withdrawing: ", DAI.balanceOf(EULER));
+        MARKETS.getUserAsset("after withdrawing", address(eDAI), address(this));
         DAI.transfer(msg.sender, DAI.balanceOf(address(this)));
     }
 }

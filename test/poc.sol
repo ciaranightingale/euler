@@ -66,7 +66,8 @@ contract EulerFinancePoC is Test {
         // approve aave to spend DAI
         DAI.approve(address(aaveV2), type(uint256).max);
         // 2. deploy two contracts
-        violator = new Violator(DAI, IEToken(address(eDAI)), dDAI, EULER, MARKETS);
+        address person = makeAddr("person");
+        violator = new Violator(DAI, IEToken(address(eDAI)), dDAI, EULER, LIQUIDATION, MARKETS, person);
         liquidator = new Liquidator(DAI, IEToken(address(eDAI)), dDAI, EULER, LIQUIDATION, MARKETS);
         // transfer flash loan to the violator
         DAI.transfer(address(violator), DAI.balanceOf(address(this)));

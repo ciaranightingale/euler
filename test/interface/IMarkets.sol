@@ -2,6 +2,7 @@
 pragma solidity ^0.8.10;
 
 import {Storage} from "../../contracts/Storage.sol";
+import {IRiskManager} from "../../contracts/IRiskManager.sol";
 
 interface IMarkets {
     function activateMarket(address underlying) external returns (address);
@@ -27,18 +28,19 @@ interface IMarkets {
     function underlyingToEToken(address underlying) external view returns (address);
     function underlyingToPToken(address underlying) external view returns (address);
 
-    function getLastInterestAccumulatorUpdate(address eToken) external view returns (uint40);
+    function getLastInterestAccumulatorUpdate(string calldata message, address eToken) external view returns (uint40);
     function getUnderlyingDecimals(address eToken) external view returns (uint8);
-    function getInterestRateModel(address eToken) external view returns (uint32);
-    function getInterestRate(address eToken) external view returns (int96);
-    function getReserveFee(address eToken) external view returns (uint32);
-    function getPricingType(address eToken) external view returns (uint16);
-    function getPricingParameters(address eToken) external view returns (uint32);
-    function getUnderlying(address eToken) external view returns (address);
-    function getReserveBalance(address eToken) external view returns (uint96);
-    function getDTokenAddress(address eToken) external view returns (address);
-    function getTotalBalances(address eToken) external view returns (uint112);
-    function getTotalBorrows(address eToken) external view returns (uint144);
-    function getInterestAccumulator(address eToken) external view returns (uint256);
-    function getUserAsset(address eToken, address user) external view returns (Storage.UserAsset memory);
+    function getInterestRateModel(string calldata message, address eToken) external view returns (uint32);
+    function getInterestRate(string calldata message, address eToken) external view returns (int96);
+    function getReserveFee(string calldata message, address eToken) external view returns (uint32);
+    function getPricingType(string calldata message, address eToken) external view returns (uint16);
+    function getPricingParameters(string calldata message, address eToken) external view returns (uint32);
+    function getUnderlying(string calldata message, address eToken) external view returns (address);
+    function getReserveBalance(string calldata message, address eToken) external view returns (uint96);
+    function getDTokenAddress(string calldata message, address eToken) external view returns (address);
+    function getTotalBalances(string calldata message, address eToken) external view returns (uint112);
+    function getTotalBorrows(string calldata message, address eToken) external view returns (uint144);
+    function getInterestAccumulator(string calldata message, address eToken) external view returns (uint256);
+    function getUserAsset(string calldata message, address eToken, address user) external view returns (Storage.UserAsset memory);
+    function getLiquidityStatus(address account) external returns (IRiskManager.LiquidityStatus memory);
 }

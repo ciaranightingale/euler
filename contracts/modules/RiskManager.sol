@@ -303,6 +303,7 @@ contract RiskManager is IRiskManager, BaseLogic {
             config = resolveAssetConfig(underlying);
             assetStorage = eTokenLookup[config.eTokenAddress];
 
+            // balance is deposits, owed is mints
             uint balance = assetStorage.users[account].balance;
             uint owed = assetStorage.users[account].owed;
 
@@ -319,26 +320,32 @@ contract RiskManager is IRiskManager, BaseLogic {
                     uint balanceInUnderlying = balanceToUnderlyingAmount(assetCache, balance);
 
                     uint selfAmount = assetLiability;
+                    // 95% thing, selfAmountAdjusted > assetLiability
                     uint selfAmountAdjusted = assetLiability * CONFIG_FACTOR_SCALE / SELF_COLLATERAL_FACTOR;
 
+                    // can't borrow more than contract has, otherwise protocol is insolvent. Individual account can have an undercollateralised loan, but protocol should not allow bad debt.
                     if (selfAmountAdjusted > balanceInUnderlying) {
+                        // selfAmount < balanceInUnderlying
                         selfAmount = balanceInUnderlying * SELF_COLLATERAL_FACTOR / CONFIG_FACTOR_SCALE;
+                        // selfAmountAdjusted > selfAmount
                         selfAmountAdjusted = balanceInUnderlying;
                     }
 
                     {
+                        // 10x leverage thing
                         uint assetCollateral = (balanceInUnderlying - selfAmountAdjusted) * config.collateralFactor / CONFIG_FACTOR_SCALE;
+                        // think this is max that can be borrowed based on collateral deposit, including current liability
                         assetCollateral += selfAmount;
                         status.collateralValue += assetCollateral * price / 1e18;
                     }
-
-                    assetLiability -= selfAmount;
+                    assetLiability -= selfAmount; // prevent double count? what's left to be collateralized by other tokens
                     status.liabilityValue += selfAmount * price / 1e18;
                     status.borrowIsolated = true; // self-collateralised loans are always isolated
                 }
 
                 assetLiability = assetLiability * price / 1e18;
                 assetLiability = config.borrowFactor != 0 ? assetLiability * CONFIG_FACTOR_SCALE / config.borrowFactor : MAX_SANE_DEBT_AMOUNT;
+                // account has borrowed more of token than contract has in collateral of token, so remaining liability needs to be collateralized by other tokens
                 status.liabilityValue += assetLiability;
             } else if (balance != 0 && config.collateralFactor != 0) {
                 initAssetCache(underlying, assetStorage, assetCache);
