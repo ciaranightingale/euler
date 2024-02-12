@@ -17,6 +17,8 @@ contract Liquidator {
     ILiquidation immutable LIQUIDATION;
     IMarkets immutable MARKETS;
 
+    event log_named_decimal_uint (string key, uint val, uint decimals);
+
     constructor(IERC20 _dai, IEToken _eDAI, IDToken _dDAI, address _euler, ILiquidation _liquidation, IMarkets _markets) {
         DAI = _dai;
         eDAI = _eDAI;
@@ -28,15 +30,22 @@ contract Liquidator {
 
 
     function liquidate(address violator) external {
+        //9. Liquidate violator's account
         ILiquidation.LiquidationOpportunity memory returnData =
             LIQUIDATION.checkLiquidation(address(this), violator, address(DAI), address(DAI));
-        MARKETS.getUserAsset("before liquidating", address(eDAI), address(this));
+
         LIQUIDATION.liquidate(violator, address(DAI), address(DAI), returnData.repay, returnData.yield);
-        MARKETS.getUserAsset("after liquidating", address(eDAI), address(this));
-        console.log("EULER balance before withdrawing: ", DAI.balanceOf(EULER));
+        MARKETS.getUserAsset("After liquidating (liquidator): ", address(eDAI), address(this));
+        emit log_named_decimal_uint("EULER balance", DAI.balanceOf(EULER), 18);
+        console.log(" ");
+
+        // 10. Withdraw contract balance
         eDAI.withdraw(0, DAI.balanceOf(EULER));
-        console.log("EULER balance after withdrawing: ", DAI.balanceOf(EULER));
-        MARKETS.getUserAsset("after withdrawing", address(eDAI), address(this));
+        MARKETS.getUserAsset("After withdrawing (liquidator): ", address(eDAI), address(this));
+        emit log_named_decimal_uint("EULER balance", DAI.balanceOf(EULER), 18);
+        console.log(" ");
+
+        // Send the funds back to the address that took the flash loan for repayment
         DAI.transfer(msg.sender, DAI.balanceOf(address(this)));
     }
 }

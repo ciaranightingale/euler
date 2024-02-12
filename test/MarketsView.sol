@@ -6,6 +6,8 @@ import {IRiskManager} from "../contracts/IRiskManager.sol";
 import "forge-std/src/Test.sol";
 
 contract MarketsView is Markets(keccak256("moduleGitCommit_")) {
+    event log_named_decimal_uint (string key, uint val, uint decimals);
+
     function getLastInterestAccumulatorUpdate(string calldata message, address eToken) public view returns (uint40) {
         console.log(message);
         console.logUint(eTokenLookup[eToken].lastInterestAccumulatorUpdate);
@@ -84,12 +86,11 @@ contract MarketsView is Markets(keccak256("moduleGitCommit_")) {
 
     function getUserAsset(string calldata message, address eToken, address user)
         public
-        view
         returns (UserAsset memory)
     {
         console.log(message);
-        console.logUint(eTokenLookup[eToken].users[getSubAccount(user, 0)].balance);
-        console.logUint(eTokenLookup[eToken].users[getSubAccount(user, 0)].owed/1e9);
+        emit log_named_decimal_uint("Collateral", eTokenLookup[eToken].users[getSubAccount(user, 0)].balance, 18);
+        emit log_named_decimal_uint("Debt", eTokenLookup[eToken].users[getSubAccount(user, 0)].owed, 27);
         return eTokenLookup[eToken].users[getSubAccount(user, 0)];
     }
 
