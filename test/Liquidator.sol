@@ -36,6 +36,8 @@ contract Liquidator {
 
         LIQUIDATION.liquidate(violator, address(DAI), address(DAI), returnData.repay, returnData.yield);
         MARKETS.getUserAsset("After liquidating (liquidator): ", address(eDAI), address(this));
+        console.log(" ");
+        MARKETS.getUserAsset("After liquidating (violator): ", address(eDAI), address(violator));
         emit log_named_decimal_uint("EULER balance", DAI.balanceOf(EULER), 18);
         console.log(" ");
 
