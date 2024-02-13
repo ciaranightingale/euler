@@ -12,7 +12,7 @@ import { IAaveFlashLoan } from "./interface/IAaveFlashLoan.sol";
 import { ILiquidation } from "./interface/ILiquidation.sol";
 import { MarketsView } from "./MarketsView.sol";
 import { IMarkets } from "./interface/IMarkets.sol";
-import { IRiskManager } from "../contracts/IRiskManager.sol";
+import { IRiskManager } from "euler-contracts/contracts/IRiskManager.sol";
 
 contract EulerFinancePoC is Test {
     IERC20 constant DAI = IERC20(0x6B175474E89094C44Da98b954EedeAC495271d0F);

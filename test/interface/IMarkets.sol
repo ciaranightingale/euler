@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-import {Storage} from "../../contracts/Storage.sol";
-import {IRiskManager} from "../../contracts/IRiskManager.sol";
+import {Storage} from "euler-contracts/contracts/Storage.sol";
+import {IRiskManager} from "euler-contracts/contracts/IRiskManager.sol";
 
 interface IMarkets {
     function activateMarket(address underlying) external returns (address);

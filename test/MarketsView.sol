@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity ^0.8.0;
 
-import {Markets} from "../contracts/modules/Markets.sol";
-import {IRiskManager} from "../contracts/IRiskManager.sol";
+import {Markets} from "euler-contracts/contracts/modules/Markets.sol";
+import {IRiskManager} from "euler-contracts/contracts/IRiskManager.sol";
 import "forge-std/src/Test.sol";
 
 contract MarketsView is Markets(keccak256("moduleGitCommit_")) {

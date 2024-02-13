@@ -6,7 +6,7 @@ import { IEToken } from "./interface/IEToken.sol";
 import { IDToken } from "./interface/IDToken.sol";
 import { ILiquidation } from "./interface/ILiquidation.sol";
 import { IMarkets } from "./interface/IMarkets.sol";
-import { IRiskManager } from "../contracts/IRiskManager.sol";
+import { IRiskManager } from "euler-contracts/contracts/IRiskManager.sol";
 
 import "forge-std/src/Test.sol";
 
@@ -56,7 +56,7 @@ contract Violator {
         MARKETS.getUserAsset("After repaying (violator): ", address(eDAI), address(this));
         emit log_named_decimal_uint("Health score", LIQUIDATION.checkLiquidation(person, address(this), address(DAI), address(DAI)).healthScore, 18);
         console.log(" ");
-        
+
         // 6. Mint 10 x deposit again
         eDAI.mint(0, 200_000_000 * 1e18);
         MARKETS.getUserAsset("After minting (violator): ", address(eDAI), address(this));
