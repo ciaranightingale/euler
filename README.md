@@ -1,13 +1,8 @@
-## Foundry
+## Euler Finance $197 Hack Analysis - Proof of Concept
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+This repository serves as a PoC demonstrating the steps taken to perform the hack which lost Euler Finance ~$197M.
 
-Foundry consists of:
-
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+This PoC is supplementary to the following article that gives a breakdown of the hack, the vulnerabilities which allowed the hack to occur and how to avoid similar hacks: ["LINK-HERE"](/linkkyyy)
 
 ## Documentation
 
@@ -15,52 +10,26 @@ https://book.getfoundry.sh/
 
 ## Usage
 
+To use this proof of concept, first clone the repository.
+
+```shell
+$ git clone https://github.com/ciaranightingale/euler.git
+```
+
+Then, install the dependencies:
+
+```shell
+$ forge install
+```
+
 ### Build
 
 ```shell
 $ forge build
 ```
 
-### Test
+### Test (with state variable output)
 
 ```shell
-$ forge test
-```
-
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
+$ forge test -vvv
 ```
