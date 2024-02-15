@@ -38,13 +38,15 @@ contract Liquidator {
         MARKETS.getUserAsset("After liquidating (liquidator): ", address(eToken), IERC20(DAI).symbol(), address(this));
         console.log(" ");
         MARKETS.getUserAsset("After liquidating (violator): ", address(eToken), IERC20(DAI).symbol(), address(violator));
-        console.log("EULER balance", DAI.balanceOf(EULER) / 1e18, IERC20(DAI).symbol());
+        console.log(" ");
+        console.log("EULER balance: ", DAI.balanceOf(EULER) / 1e18, IERC20(DAI).symbol());
         console.log(" ");
 
         // 10. Withdraw contract balance
         eToken.withdraw(0, DAI.balanceOf(EULER));
         MARKETS.getUserAsset("After withdrawing (liquidator): ", address(eToken), IERC20(DAI).symbol(), address(this));
-        console.log("EULER balance", DAI.balanceOf(EULER) / 1e18, IERC20(DAI).symbol());
+        console.log(" ");
+        console.log("EULER balance: ", DAI.balanceOf(EULER) / 1e18, IERC20(DAI).symbol());
         console.log(" ");
 
         // Send the funds back to the address that took the flash loan for repayment
