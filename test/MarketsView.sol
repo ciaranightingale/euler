@@ -3,6 +3,9 @@ pragma solidity ^0.8.0;
 
 import {Markets} from "euler-contracts/contracts/modules/Markets.sol";
 import {IRiskManager} from "euler-contracts/contracts/IRiskManager.sol";
+import {IDToken} from "./interface/IDToken.sol";
+import {IEToken} from "./interface/IEToken.sol";
+
 import "forge-std/src/Test.sol";
 
 contract MarketsView is Markets(keccak256("moduleGitCommit_")) {
@@ -84,13 +87,15 @@ contract MarketsView is Markets(keccak256("moduleGitCommit_")) {
         return eTokenLookup[eToken].interestAccumulator;
     }
 
-    function getUserAsset(string calldata message, address eToken, address user)
+    function getUserAsset(string calldata message, address eToken, string memory symbol, address user)
         public
         returns (UserAsset memory)
     {
         console.log(message);
-        emit log_named_decimal_uint("Collateral", eTokenLookup[eToken].users[getSubAccount(user, 0)].balance, 18);
-        emit log_named_decimal_uint("Debt", eTokenLookup[eToken].users[getSubAccount(user, 0)].owed, 27);
+        string memory collateralString = string.concat("Collateral", " (", "e", symbol, ")");
+        string memory debtString = string.concat("Debt", " (", "d",symbol, ")");
+        emit log_named_decimal_uint(collateralString, eTokenLookup[eToken].users[getSubAccount(user, 0)].balance, 18);
+        emit log_named_decimal_uint(debtString, eTokenLookup[eToken].users[getSubAccount(user, 0)].owed, 27);
         return eTokenLookup[eToken].users[getSubAccount(user, 0)];
     }
 
@@ -101,7 +106,4 @@ contract MarketsView is Markets(keccak256("moduleGitCommit_")) {
         );
         (status) = abi.decode(result, (IRiskManager.LiquidityStatus));
     }
-
-    // mapping(address => mapping(address => uint)) eTokenAllowance;
-    // mapping(address => mapping(address => uint)) dTokenAllowance;
 }

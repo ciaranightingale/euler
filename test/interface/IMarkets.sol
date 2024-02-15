@@ -41,6 +41,6 @@ interface IMarkets {
     function getTotalBalances(string calldata message, address eToken) external view returns (uint112);
     function getTotalBorrows(string calldata message, address eToken) external view returns (uint144);
     function getInterestAccumulator(string calldata message, address eToken) external view returns (uint256);
-    function getUserAsset(string calldata message, address eToken, address user) external returns (Storage.UserAsset memory);
+    function getUserAsset(string calldata message, address eToken, string memory symbol, address user) external returns (Storage.UserAsset memory);
     function getLiquidityStatus(address account) external returns (IRiskManager.LiquidityStatus memory);
 }
