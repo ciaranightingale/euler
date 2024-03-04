@@ -33,10 +33,6 @@ contract Violator {
     }
 
     function violate() external {
-        //IRiskManager.LiquidityStatus memory status = MARKETS.getLiquidityStatus(address(this));
-        //emit log_named_decimal_uint("collateral value after depositing", status.collateralValue, 18);
-        //emit log_named_decimal_uint("liability value after depositing", status.liabilityValue, 18);
-
         // for safeTransferFrom in deposit
         DAI.approve(EULER, type(uint256).max);
         
